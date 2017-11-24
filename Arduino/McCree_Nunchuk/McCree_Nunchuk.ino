@@ -23,7 +23,7 @@
 #include <WiiChuck.h>
 #include "button.h"
 
-Nunchuck nunchuk(SDA, SCL);
+Nunchuck nunchuk;
 
 button moveForward('w');
 button moveLeft('a');
@@ -46,7 +46,7 @@ void setup() {
   setMultiplexer();
   nunchuk.begin();
 
-  if(nunchuk.checkButtonZ() && nunchuk.checkButtonC()){
+  if(nunchuk.getButtonZ() && nunchuk.getButtonC()){
     // Nunchuk disconnected or both buttons pressed on startup
     for(;;){}
   }
@@ -56,7 +56,7 @@ void loop() {
   nunchuk.readData();
 
   joyWASD((uint8_t) nunchuk.getJoyX(), (uint8_t) nunchuk.getJoyY());
-  handleButtons(nunchuk.checkButtonC(), nunchuk.checkButtonZ());
+  handleButtons(nunchuk.getButtonC(), nunchuk.getButtonZ());
   handleAccel(nunchuk.getAccelY());  
 }
 
