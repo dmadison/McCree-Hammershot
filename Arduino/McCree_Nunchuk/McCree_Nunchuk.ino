@@ -53,11 +53,14 @@ void setup() {
 }
 
 void loop() {
-  nunchuk.readData();
-
-  joyWASD((uint8_t) nunchuk.getJoyX(), (uint8_t) nunchuk.getJoyY());
-  handleButtons(nunchuk.getButtonC(), nunchuk.getButtonZ());
-  handleAccel(nunchuk.getAccelY());  
+  if(nunchuk.readData()){
+    joyWASD((uint8_t) nunchuk.getJoyX(), (uint8_t) nunchuk.getJoyY());
+    handleButtons(nunchuk.getButtonC(), nunchuk.getButtonZ());
+    handleAccel(nunchuk.getAccelY());
+  }
+  else{
+    releaseAll();
+  }
 }
 
 void joyWASD(uint8_t x, uint8_t y){
@@ -109,3 +112,21 @@ void setMultiplexer(){
   Wire.write(1 << 0); // Switch to port 0
   Wire.endTransmission();  
 }
+
+void pressAll(boolean p){
+  moveForward.press(p);
+  moveLeft.press(p);
+  moveBack.press(p);
+  moveRight.press(p);
+  
+  jump.press(p);
+  roll.press(p);
+  commWheel.press(p);
+  
+  scoreboard.press(p);
+}
+
+void releaseAll(){
+  pressAll(false);
+}
+
