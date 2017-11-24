@@ -23,7 +23,7 @@
 #include <WiiChuck.h>
 #include "button.h"
 
-Nunchuck nunchuk(SDA, SCL);
+Nunchuck nunchuk;
 
 button moveForward('w');
 button moveLeft('a');
@@ -44,21 +44,23 @@ void setup() {
   }
 
   setMultiplexer();
-  TWBR = 12; // Gotta go fast I2C
   nunchuk.begin();
 
-  if(nunchuk.checkButtonZ() && nunchuk.checkButtonC()){
+  if(nunchuk.getButtonZ() && nunchuk.getButtonC()){
     // Nunchuk disconnected or both buttons pressed on startup
     for(;;){}
   }
 }
 
 void loop() {
-  nunchuk.readData();
-
-  joyWASD((uint8_t) nunchuk.getJoyX(), (uint8_t) nunchuk.getJoyY());
-  handleButtons(nunchuk.checkButtonC(), nunchuk.checkButtonZ());
-  handleAccel(nunchuk.getAccelY());  
+  if(nunchuk.readData()){
+    joyWASD((uint8_t) nunchuk.getJoyX(), (uint8_t) nunchuk.getJoyY());
+    handleButtons(nunchuk.getButtonC(), nunchuk.getButtonZ());
+    handleAccel(nunchuk.getAccelY());
+  }
+  else{
+    releaseAll();
+  }
 }
 
 void joyWASD(uint8_t x, uint8_t y){
@@ -110,3 +112,21 @@ void setMultiplexer(){
   Wire.write(1 << 0); // Switch to port 0
   Wire.endTransmission();  
 }
+
+void pressAll(boolean p){
+  moveForward.press(p);
+  moveLeft.press(p);
+  moveBack.press(p);
+  moveRight.press(p);
+  
+  jump.press(p);
+  roll.press(p);
+  commWheel.press(p);
+  
+  scoreboard.press(p);
+}
+
+void releaseAll(){
+  pressAll(false);
+}
+
