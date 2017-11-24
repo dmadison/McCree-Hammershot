@@ -44,7 +44,6 @@ void setup() {
   }
 
   setMultiplexer();
-  TWBR = 12; // Gotta go fast I2C
   nunchuk.begin();
 
   if(nunchuk.checkButtonZ() && nunchuk.checkButtonC()){
